@@ -1,0 +1,119 @@
+﻿@using System.Web
+@model ListaReproduccionMVC.Models.Playlist
+
+@{
+    ViewBag.Title = "Detalles de Playlist";
+
+    var totalCanciones = Model.PlaylistCanciones != null
+        ? Model.PlaylistCanciones.Count
+        : 0;
+}
+
+<div class="playlist-header">
+    <div class="playlist-cover">
+        🎧
+    </div>
+
+    <div class="playlist-info">
+        <span class="playlist-label">Playlist</span>
+        <h1>@Model.Nombre</h1>
+
+        <p>
+            <strong>Descripción:</strong> @Model.Descripcion
+        </p>
+
+        <span class="playlist-count">
+            @totalCanciones canción(es) guardada(s)
+        </span>
+    </div>
+</div>
+
+<div class="playlist-actions">
+    @Html.ActionLink("Agregar canción", "AgregarCancion", new { id = Model.PlaylistId }, new { @class = "btn btn-primary" })
+</div>
+
+@if (Model.PlaylistCanciones != null && Model.PlaylistCanciones.Any())
+{
+    <table class="table playlist-table">
+        <tr>
+            <th>Título</th>
+            <th>Artista</th>
+            <th>Género</th>
+            <th>Duración</th>
+            <th>Reproducir</th>
+            <th>Acciones</th>
+        </tr>
+
+        @foreach (var item in Model.PlaylistCanciones)
+        {
+            var iconoCancion = "🎵";
+            var genero = item.Cancion.Genero != null ? item.Cancion.Genero.ToLower() : "";
+
+            if (genero.Contains("anime"))
+            {
+                iconoCancion = "🎧";
+            }
+            else if (genero.Contains("rock"))
+            {
+                iconoCancion = "🎸";
+            }
+            else if (genero.Contains("lofi") || genero.Contains("lo-fi"))
+            {
+                iconoCancion = "🌙";
+            }
+            else if (genero.Contains("pop"))
+            {
+                iconoCancion = "✨";
+            }
+
+            <tr>
+                <td class="song-title">
+                    <div class="song-cell">
+                        <div class="song-cover-mini">@iconoCancion</div>
+                        <span>@item.Cancion.Titulo</span>
+                    </div>
+                </td>
+
+                <td>@item.Cancion.Artista</td>
+                <td>@item.Cancion.Genero</td>
+                <td>@item.Cancion.Duracion</td>
+
+                <td>
+                    <button type="button"
+                            class="btn-play-table"
+                            onclick="reproducir('@HttpUtility.JavaScriptStringEncode(item.Cancion.Enlace ?? "")', '@HttpUtility.JavaScriptStringEncode(item.Cancion.Titulo ?? "")', '@HttpUtility.JavaScriptStringEncode(item.Cancion.Artista ?? "")')">
+                        ▶
+                    </button>
+                </td>
+
+                <td>
+                    @using (Html.BeginForm("QuitarCancion", "Playlists", FormMethod.Post, new { onsubmit = "return confirm('¿Quitar esta canción de la playlist?');" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" name="playlistCancionId" value="@item.PlaylistCancionId" />
+
+                        <button type="submit" class="btn btn-danger">
+                            Quitar
+                        </button>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <div class="empty-playlist">
+        <div class="empty-icon">🎵</div>
+        <h3>Esta playlist todavía no tiene canciones</h3>
+        <p>Agrega canciones para comenzar a reproducir tu mezcla personalizada.</p>
+    </div>
+}
+
+<hr />
+
+<p class="playlist-links">
+    @Html.ActionLink("Editar playlist", "Edit", new { id = Model.PlaylistId }) |
+    @Html.ActionLink("Volver a mis playlists", "Index")
+</p>

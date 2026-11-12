@@ -1,0 +1,51 @@
+﻿@model ListaReproduccionMVC.Models.ViewModels.LoginViewModel
+
+@{
+    ViewBag.Title = "Login";
+}
+
+<div class="auth-page">
+    <div class="auth-card login-card">
+        <div class="auth-header">
+            <div class="auth-icon">🎧</div>
+            <h2>Iniciar sesión</h2>
+            <p>Entra a tu perfil musical y continúa organizando tus canciones, playlists y objetivos de estudio.</p>
+        </div>
+
+        @if (TempData["Mensaje"] != null)
+        {
+            <div class="auth-alert-success">
+                @TempData["Mensaje"]
+            </div>
+        }
+
+        @using (Html.BeginForm("Login", "Cuenta", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger auth-summary" })
+
+            <div class="login-fields">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Correo, "Correo electrónico", new { @class = "auth-label" })
+                    @Html.TextBoxFor(model => model.Correo, new { @class = "form-control auth-input", placeholder = "ejemplo@correo.com", autocomplete = "email" })
+                    @Html.ValidationMessageFor(model => model.Correo, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Password, "Contraseña", new { @class = "auth-label" })
+                    @Html.PasswordFor(model => model.Password, new { @class = "form-control auth-input", placeholder = "Ingresa tu contraseña", autocomplete = "current-password" })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="auth-actions">
+                <button type="submit" class="btn btn-primary auth-main-btn">
+                    Iniciar sesión
+                </button>
+
+                @Html.ActionLink("Crear cuenta", "Registro", "Cuenta", null, new { @class = "auth-link" })
+            </div>
+        }
+    </div>
+</div>

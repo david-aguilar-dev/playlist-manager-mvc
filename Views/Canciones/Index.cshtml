@@ -1,0 +1,91 @@
+﻿@using System.Web
+@model IEnumerable<ListaReproduccionMVC.Models.Cancion>
+
+@{
+    ViewBag.Title = "Mis canciones";
+}
+
+<div class="library-header">
+    <div>
+        <span class="playlist-label">Biblioteca</span>
+        <h1>Mis canciones</h1>
+        <p>Administra tus canciones según género, estado de ánimo y objetivo de estudio.</p>
+    </div>
+
+    @Html.ActionLink("Agregar canción", "Create", null, new { @class = "btn btn-primary" })
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <div class="songs-grid">
+        @foreach (var item in Model)
+        {
+            var iconoCancion = "🎵";
+            var genero = item.Genero != null ? item.Genero.ToLower() : "";
+
+            if (genero.Contains("anime"))
+            {
+                iconoCancion = "🎧";
+            }
+            else if (genero.Contains("rock"))
+            {
+                iconoCancion = "🎸";
+            }
+            else if (genero.Contains("lofi") || genero.Contains("lo-fi"))
+            {
+                iconoCancion = "🌙";
+            }
+            else if (genero.Contains("pop"))
+            {
+                iconoCancion = "✨";
+            }
+            else if (genero.Contains("rap") || genero.Contains("hip"))
+            {
+                iconoCancion = "🎤";
+            }
+
+            <div class="song-card">
+                <div class="song-card-cover">
+                    @iconoCancion
+                </div>
+
+                <div class="song-card-info">
+                    <h3>@item.Titulo</h3>
+                    <p>@item.Artista</p>
+
+                    <div class="song-meta">
+                        <span>@item.Genero</span>
+                        <span>@item.Duracion</span>
+                    </div>
+
+                    <div class="song-extra">
+                        <span>Ánimo: @item.EstadoAnimo</span>
+                        <span>Objetivo: @item.ObjetivoEstudio</span>
+                    </div>
+                </div>
+
+                <div class="song-card-actions">
+                    <button type="button"
+                            class="btn-play-table"
+                            onclick="reproducir('@HttpUtility.JavaScriptStringEncode(item.Enlace ?? "")', '@HttpUtility.JavaScriptStringEncode(item.Titulo ?? "")', '@HttpUtility.JavaScriptStringEncode(item.Artista ?? "")')">
+                        ▶
+                    </button>
+
+                    <div class="song-links">
+                        @Html.ActionLink("Editar", "Edit", new { id = item.CancionId })
+                        @Html.ActionLink("Detalles", "Details", new { id = item.CancionId })
+                        @Html.ActionLink("Eliminar", "Delete", new { id = item.CancionId }, new { @class = "delete-link" })
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="empty-playlist">
+        <div class="empty-icon">🎵</div>
+        <h3>No tienes canciones registradas</h3>
+        <p>Agrega tu primera canción para comenzar a crear tu biblioteca musical.</p>
+    </div>
+}

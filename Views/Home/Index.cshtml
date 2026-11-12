@@ -1,0 +1,181 @@
+﻿@{
+    ViewBag.Title = "Inicio";
+
+    var nombreUsuario = Session["UsuarioNombre"] != null
+        ? Session["UsuarioNombre"].ToString()
+        : "Usuario";
+}
+
+<div class="home-hero">
+    <div class="home-text">
+        <span class="playlist-label">MusicApp</span>
+
+        <h1>Bienvenido, @nombreUsuario</h1>
+
+        <p>
+            Organiza tus canciones, crea playlists y acompaña tus sesiones de estudio
+            con música según tu estado de ánimo y objetivo.
+        </p>
+
+        <div class="home-actions">
+            @Html.ActionLink("Ver canciones", "Index", "Canciones", null, new { @class = "btn btn-primary" })
+            @Html.ActionLink("Mis playlists", "Index", "Playlists", null, new { @class = "btn btn-default" })
+        </div>
+    </div>
+
+    <div class="focus-card">
+        <div class="focus-icon">⏱️</div>
+
+        <h2>Temporizador de enfoque</h2>
+        <p>Sesión rápida para estudiar con música.</p>
+
+        <div class="timer-config">
+            <label for="timerMinutes">Minutos</label>
+            <div class="timer-input-row">
+                <input type="number" id="timerMinutes" value="25" min="1" max="180" />
+                <button type="button" class="btn btn-default" onclick="aplicarMinutos()">Aplicar</button>
+            </div>
+        </div>
+
+        <div id="timerDisplay" class="timer-display">
+            25:00
+        </div>
+
+        <div class="timer-buttons">
+            <button type="button" class="btn btn-primary" onclick="iniciarTemporizador()">Iniciar</button>
+            <button type="button" class="btn btn-default" onclick="pausarTemporizador()">Pausar</button>
+            <button type="button" class="btn btn-default" onclick="reiniciarTemporizador()">Reiniciar</button>
+        </div>
+
+        <span class="timer-note" id="timerNote">Modo estudio • 25 minutos</span>
+    </div>
+
+    <div class="home-stats">
+        <div class="stat-card">
+            <span>🎵</span>
+            <h3>Canciones</h3>
+            <p>Guarda música según género, ánimo y objetivo de estudio.</p>
+        </div>
+
+        <div class="stat-card">
+            <span>📋</span>
+            <h3>Playlists</h3>
+            <p>Crea mezclas personalizadas para concentrarte mejor.</p>
+        </div>
+
+        <div class="stat-card">
+            <span>🎧</span>
+            <h3>Reproductor</h3>
+            <p>Escucha tus canciones desde la barra inferior.</p>
+        </div>
+    </div>
+
+    @section scripts {
+        <script>
+            var minutosConfigurados = 25;
+            var tiempoRestante = minutosConfigurados * 60;
+            var intervaloTemporizador = null;
+
+            function actualizarTemporizador() {
+                var minutos = Math.floor(tiempoRestante / 60);
+                var segundos = tiempoRestante % 60;
+
+                document.getElementById("timerDisplay").innerText =
+                    minutos + ":" + (segundos < 10 ? "0" : "") + segundos;
+            }
+
+            function aplicarMinutos() {
+                var input = document.getElementById("timerMinutes");
+                var minutos = parseInt(input.value);
+
+                if (isNaN(minutos) || minutos < 1) {
+                    alert("Ingresa un tiempo válido.");
+                    return;
+                }
+
+                if (minutos > 180) {
+                    alert("El máximo permitido es 180 minutos.");
+                    return;
+                }
+
+                clearInterval(intervaloTemporizador);
+                intervaloTemporizador = null;
+
+                minutosConfigurados = minutos;
+                tiempoRestante = minutosConfigurados * 60;
+
+                document.getElementById("timerNote").innerText =
+                    "Modo estudio • " + minutosConfigurados + " minutos";
+
+                actualizarTemporizador();
+            }
+
+            function iniciarTemporizador() {
+                if (intervaloTemporizador !== null) {
+                    return;
+                }
+
+                intervaloTemporizador = setInterval(function () {
+                    if (tiempoRestante > 0) {
+                        tiempoRestante--;
+                        actualizarTemporizador();
+                    } else {
+                        clearInterval(intervaloTemporizador);
+                        intervaloTemporizador = null;
+
+                        detenerMusica();
+                        sonarAlarma();
+
+                        alert("Sesión de enfoque completada.");
+                    }
+                }, 1000);
+            }
+
+            function pausarTemporizador() {
+                clearInterval(intervaloTemporizador);
+                intervaloTemporizador = null;
+            }
+
+            function reiniciarTemporizador() {
+                clearInterval(intervaloTemporizador);
+                intervaloTemporizador = null;
+
+                tiempoRestante = minutosConfigurados * 60;
+                actualizarTemporizador();
+            }
+
+            function detenerMusica() {
+                var audio = document.getElementById("audioPlayer");
+
+                if (audio) {
+                    audio.pause();
+
+                    var btnPlayPause = document.getElementById("btnPlayPause");
+                    if (btnPlayPause) {
+                        btnPlayPause.innerText = "▶";
+                    }
+                }
+            }
+
+            function sonarAlarma() {
+                var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                var oscillator = audioContext.createOscillator();
+                var gainNode = audioContext.createGain();
+
+                oscillator.type = "sine";
+                oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+
+                gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1.2);
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 1.2);
+            }
+
+            actualizarTemporizador();
+        </script>
+    }

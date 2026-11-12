@@ -1,0 +1,68 @@
+﻿@model ListaReproduccionMVC.Models.ViewModels.RegistroViewModel
+
+@{
+    ViewBag.Title = "Registro";
+}
+
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">🎵</div>
+            <h2>Registro de usuario</h2>
+            <p>Crea tu perfil musical para organizar canciones según tu estado de ánimo y objetivo de estudio.</p>
+        </div>
+
+        @using (Html.BeginForm("Registro", "Cuenta", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger auth-summary" })
+
+            <div class="auth-grid">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Nombre, "Nombre", new { @class = "auth-label" })
+                    @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control auth-input", placeholder = "Ej: Fernando" })
+                    @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Correo, "Correo electrónico", new { @class = "auth-label" })
+                    @Html.TextBoxFor(model => model.Correo, new { @class = "form-control auth-input", placeholder = "ejemplo@correo.com", autocomplete = "email" })
+                    @Html.ValidationMessageFor(model => model.Correo, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Password, "Contraseña", new { @class = "auth-label" })
+                    @Html.PasswordFor(model => model.Password, new { @class = "form-control auth-input", placeholder = "Ingresa una contraseña", autocomplete = "new-password" })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ConfirmarPassword, "Confirmar contraseña", new { @class = "auth-label" })
+                    @Html.PasswordFor(model => model.ConfirmarPassword, new { @class = "form-control auth-input", placeholder = "Repite tu contraseña", autocomplete = "new-password" })
+                    @Html.ValidationMessageFor(model => model.ConfirmarPassword, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.GeneroFavorito, "Género favorito", new { @class = "auth-label" })
+                    @Html.TextBoxFor(model => model.GeneroFavorito, new { @class = "form-control auth-input", placeholder = "Ej: Anime, Rock, Lo-fi" })
+                    @Html.ValidationMessageFor(model => model.GeneroFavorito, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ObjetivoEstudio, "Objetivo de estudio", new { @class = "auth-label" })
+                    @Html.TextBoxFor(model => model.ObjetivoEstudio, new { @class = "form-control auth-input", placeholder = "Ej: Concentración, relajación, enfoque" })
+                    @Html.ValidationMessageFor(model => model.ObjetivoEstudio, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="auth-actions">
+                <button type="submit" class="btn btn-primary auth-main-btn">
+                    Registrarse
+                </button>
+
+                @Html.ActionLink("Ya tengo cuenta", "Login", "Cuenta", null, new { @class = "auth-link" })
+            </div>
+        }
+    </div>
+</div>

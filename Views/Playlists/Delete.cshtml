@@ -1,0 +1,33 @@
+﻿@model ListaReproduccionMVC.Models.Playlist
+
+@{
+    ViewBag.Title = "Eliminar Playlist";
+}
+
+<h2>Eliminar Playlist</h2>
+
+<h3>¿Seguro que quieres eliminar esta playlist?</h3>
+
+<div>
+    <h4>Playlist</h4>
+    <hr />
+
+    <dl class="dl-horizontal">
+        <dt>Nombre</dt>
+        <dd>@Model.Nombre</dd>
+
+        <dt>Descripción</dt>
+        <dd>@Model.Descripcion</dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Eliminar" class="btn btn-danger" />
+            |
+            @Html.ActionLink("Cancelar", "Index")
+        </div>
+    }
+</div>

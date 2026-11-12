@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ListaReproduccionMVC.Models.Cancion>
+
+@{
+    ViewBag.Title = "Agregar Canción";
+}
+
+<h2>Agregar canción a: @ViewBag.PlaylistNombre</h2>
+
+<p>
+    @Html.ActionLink("Volver a la playlist", "Details", new { id = ViewBag.PlaylistId })
+</p>
+
+@if (!Model.Any())
+{
+    <p>No hay canciones disponibles para agregar.</p>
+}
+else
+{
+    <table class="table">
+        <tr>
+            <th>Título</th>
+            <th>Artista</th>
+            <th>Género</th>
+            <th>Duración</th>
+            <th>Acción</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Titulo</td>
+                <td>@item.Artista</td>
+                <td>@item.Genero</td>
+                <td>@item.Duracion</td>
+                <td>
+                    @using (Html.BeginForm("AgregarCancion", "Playlists", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" name="playlistId" value="@ViewBag.PlaylistId" />
+                        <input type="hidden" name="cancionId" value="@item.CancionId" />
+
+                        <button type="submit" class="btn btn-success">
+                            Agregar
+                        </button>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+}

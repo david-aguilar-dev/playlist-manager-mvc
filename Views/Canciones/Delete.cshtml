@@ -1,0 +1,65 @@
+﻿@model ListaReproduccionMVC.Models.Cancion
+
+@{
+    ViewBag.Title = "Eliminar canción";
+}
+
+<div class="delete-page">
+    <div class="delete-warning-card">
+        <div class="delete-icon">⚠️</div>
+
+        <h2>Eliminar canción</h2>
+
+        <p class="delete-message">
+            ¿Seguro que deseas eliminar esta canción? Esta acción no se puede deshacer.
+        </p>
+
+        <div class="delete-song-info">
+            <div>
+                <span>Título</span>
+                <strong>@Model.Titulo</strong>
+            </div>
+
+            <div>
+                <span>Artista</span>
+                <strong>@Model.Artista</strong>
+            </div>
+
+            <div>
+                <span>Género</span>
+                <strong>@Model.Genero</strong>
+            </div>
+
+            <div>
+                <span>Estado de ánimo</span>
+                <strong>@Model.EstadoAnimo</strong>
+            </div>
+
+            <div>
+                <span>Objetivo de estudio</span>
+                <strong>@Model.ObjetivoEstudio</strong>
+            </div>
+
+            <div>
+                <span>Duración</span>
+                <strong>@Model.Duracion</strong>
+            </div>
+
+            <div>
+                <span>Archivo de audio</span>
+                <strong>@Model.Enlace</strong>
+            </div>
+        </div>
+
+        @using (Html.BeginForm("Delete", "Canciones", new { id = Model.CancionId }, FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="delete-actions">
+                <input type="submit" value="Eliminar definitivamente" class="btn btn-danger" />
+
+                @Html.ActionLink("Volver a canciones", "Index", null, new { @class = "btn btn-default" })
+            </div>
+        }
+    </div>
+</div>
